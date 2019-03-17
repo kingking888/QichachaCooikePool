@@ -45,6 +45,19 @@ def qichacha_login(id,password):
             b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
     # 点击
     close_weixin()
+    search()
+    get_search_cookie()
+def get_search_cookie():
+    i = 0
+    while(i<5):
+        if "search?key" in b1.current_url:
+            a = b1.get_cookies()
+            print(a)
+            return a
+        else:
+            sleep(3)
+            print("加载中...")
+        i+=1
     print("xx")
 def close_weixin():
     try_time = 0
@@ -61,7 +74,13 @@ def close_weixin():
 
             print("无微信界面")
         try_time += 1
+def search(word = "京东"):
 
+    b1.find_element_by_xpath("//input[@id='searchkey']").send_keys(word)
+    # 注意这里停顿 保证搜索按钮可以加载
+    sleep(3)
+    c = b1.find_element_by_xpath("//span[@class='input-group-btn']")
+    c.click()
 def while_wait():
     while(True):
         sleep(0.5)
