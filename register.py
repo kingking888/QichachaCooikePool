@@ -3,43 +3,55 @@ from time import sleep
 from PIL import Image
 from io import BytesIO
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 
 from fateadm_api import TestFunc
 
-
-def laima_login():
+SlIDER_LEN = 308
+def qichacha_login(id,password):
     '''
-    :Description：登录来码接码平台：http://www.w6888.cn/
+    :Description：登录企查查平台：https://www.qichacha.com/user_login?back=%2F
     :return:
     '''
+    # b1.delete_all_cookies()
+    b1.find_element_by_xpath("//a[@id='normalLogin']").click()
     # 填写用户名
-    user = b2.find_element_by_xpath("//input[@id='yhmc']")
-    user.send_keys("kkisabodybuilder")
+    user = b1.find_element_by_xpath("//input[@id='nameNormal']")
+    user.send_keys(id)
     # 输入密码
-    pd = b2.find_element_by_xpath("//input[@id='psw']")
-    pd.send_keys("eminem")
+    pd = b1.find_element_by_xpath("//input[@id='pwdNormal']")
+    pd.send_keys(password)
+    # 定位验证码
+    slider = b1.find_element_by_xpath("//span[@id='nc_1_n1z']")
+    ActionChains(b1).click_and_hold(slider).perform()
+    ActionChains(b1).move_by_offset(xoffset=SlIDER_LEN,yoffset=0).perform()
+    sleep(4)
     # 截图验证码，下载验证码，使用接码平台来识别验证码
     identifying_code_pic =time.strftime('%Y%m%d-%H%M%S',time.localtime(time.time()))+".png"
-    b2.find_element_by_xpath("//img[@id='imgRandom']").screenshot(identifying_code_pic)
+    b1.find_element_by_xpath("//div[@id='nc_1__imgCaptcha_img']//img").screenshot(identifying_code_pic)
     identifying_code = TestFunc(identifying_code_pic)
     # 填写验证码
-    yzm = b2.find_element_by_xpath("//input[@id='yzm']")
+    yzm = b1.find_element_by_xpath("//input[@id='nc_1_captcha_input']")
     yzm.send_keys(identifying_code.value)
-    # 点击登录按钮
-    b2.find_element_by_xpath("//input[@id='btnOK']").click()
+    # 点击验证码确认按钮
+    b1.find_element_by_xpath("//div[@id='nc_1_scale_submit']").click()
+    while(True):
+        sleep(5)
+        if 'user_login' not in b1.current_url:
+            break
+        else:
+            b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
+
     print("xx")
 def while_wait():
     while(True):
         sleep(0.5)
 
         break
-b1 = webdriver.Firefox()
-b2 = webdriver.Firefox()
-b1.get("https://www.qichacha.com/user_register")
-b2.get("http://www.w6888.cn/index.html")
-#
-laima_login()
-# 提交表单
-# b2.find_element_by_xpath("//*[@id='su']").click()
 
 print("xx")
+if __name__ == "__main__":
+    b1 = webdriver.Firefox()
+    b1.get("https://www.qichacha.com/user_login")
+    qichacha_login("18224089826","123456")
+
