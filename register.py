@@ -38,11 +38,30 @@ def qichacha_login(id,password):
     while(True):
         sleep(5)
         if 'user_login' not in b1.current_url:
+            print("进入页面...")
             break
         else:
+            print("点击中...")
             b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
-
+    # 点击
+    close_weixin()
     print("xx")
+def close_weixin():
+    try_time = 0
+    while(try_time<5):
+        sleep(5)
+        print(try_time)
+        try:
+            # b1.find_element_by_xpath("//div[@id='bindWxQrcode']")
+            b1.find_element_by_xpath("//button[@class='close']").click()
+            print("成功关闭微信界面")
+            return
+        except:
+            pass
+
+            print("无微信界面")
+        try_time += 1
+
 def while_wait():
     while(True):
         sleep(0.5)
