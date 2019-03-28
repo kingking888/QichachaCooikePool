@@ -4,7 +4,7 @@ import time
 from login import Qichacha
 import json
 
-def update_solr(user_name,user_cookie):
+def update_solr(user_name,user_cookie,isValid="True"):
     params = {"overwrite": "true", "commitWithin": 1000, "wt": "json"}
     solr_into_url = "http://blackbox01.jry.com:8983/solr/qichacha_cookie_shard1_replica2/update"
     headers = {"Content-Type": "application/json"}
@@ -13,7 +13,7 @@ def update_solr(user_name,user_cookie):
                   "logoutTime":{"set":0},
                   "createTime":{"set":time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))},
                   "lastUsedTime":{"set":time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))},
-                  "isValid":{"set":"True"}}
+                  "isValid":{"set":isValid}}
                   ]
     a = json.dumps(solr_data, ensure_ascii=False)
     re = requests.post(solr_into_url, data=a,params=params,headers=headers)
