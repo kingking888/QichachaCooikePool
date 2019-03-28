@@ -11,10 +11,15 @@ def get_hm(token,xmid="10832"):
         hm = res.content.decode('utf-8').split("=")[1]
         return hm
 def get_yzm(token,hm,xmid="10832"):
-    res = re.get("http://w6888.cn:9180/service.asmx/GetYzmStr?token={0}&hm={1}&xmid={2}"
+    try:
+        res = re.get("http://w6888.cn:9180/service.asmx/GetYzmStr?token={0}&hm={1}&xmid={2}"
                  .format(token,hm,xmid))
-    if res.status_code == 200:
-        return res.content.decode('utf-8')
+        if res.status_code == 200:
+            return res.content.decode('utf-8')
+    except Exception as e:
+        print(e)
+        # release_hm(token,hm)
+        return False
 def release_hm(token,hm):
     res = re.get("http://w6888.cn:9180/service.asmx/sfHmStr?token={0}&hm={1}".format(token,id))
     if res.status_code == 200:

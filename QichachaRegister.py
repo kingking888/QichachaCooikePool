@@ -101,7 +101,8 @@ class QichachaRegister:
         while(True):
             wait_time = 0
             content = get_yzm( token,id)
-            if wait_time > 30:
+
+            if wait_time > 30 or content == False:
                 print("收不到验证码，放弃。")
                 return
             if  content != "-1" and content != "0" and content != '1':
