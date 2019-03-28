@@ -1,37 +1,40 @@
-import time
 from time import sleep
+import time
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 
 from fateadm_api import TestFunc
+from w6888 import get_yzm, release_hm, write_regsitered_hm
 
 SlIDER_LEN = 308
 
 
-class Qichacha:
-
+class QichachaRegister:
     def __init__(self):
         self.b1 = webdriver.Firefox(executable_path="D:/geckodriver.exe")
-        self.b1.get("https://www.qichacha.com/user_login")
+        self.b1.get("https://www.qichacha.com/user_register")
+
     def close(self):
         self.b1.close()
-    def qichacha_login(self, id, password):
+
+    def qichacha_register(self, id,token,password = '123456'):
         '''
         :Description：登录企查查平台：https://www.qichacha.com/user_login?back=%2F
         :return:
         '''
         # self.b1.delete_all_cookies()
         sleep(1)
-        self.b1.find_element_by_xpath("//a[@id='normalLogin']").click()
+        # self.b1.find_element_by_xpath("//a[@id='normalLogin']").click()
         # 填写用户名
-        user = self.b1.find_element_by_xpath("//input[@id='nameNormal']")
+        user = self.b1.find_element_by_xpath("//input[@id='phone']")
         user.send_keys(id)
         # 输入密码
-        pd = self.b1.find_element_by_xpath("//input[@id='pwdNormal']")
+        pd = self.b1.find_element_by_xpath("//input[@id='pswd']")
         pd.send_keys(password)
         # 定位验证码
-        while(True):
+        while (True):
             try:
                 slider = self.b1.find_element_by_xpath("//span[@id='nc_1_n1z']")
                 ActionChains(self.b1).click_and_hold(slider).perform()
@@ -39,7 +42,7 @@ class Qichacha:
                 sleep(1)
                 break
             except NoSuchElementException as e:
-                print("定位验证码")
+                print("定位验证码中")
             except Exception as e:
                 print(e)
         # 截图验证码，下载验证码，使用接码平台来识别验证码
@@ -81,74 +84,72 @@ class Qichacha:
                 print(e)
                 pass
             sleep(1)
+        # 点击获取验证
         while (True):
-            sleep(3)
-            if 'user_login' not in self.b1.current_url:
-                print("进入页面...")
-                break
-            else:
-                print("点击中...")
-                self.b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
-        # 点击
-        self.close_weixin()
-        self.search()
-        return "".join([_['name']+"="+_['value']+";" for _ in self.get_search_cookie()])
-
-    def get_search_cookie(self):
-        i = 0
-        while (i < 5):
-            if "search?key" in self.b1.current_url:
-                a = self.b1.get_cookies()
-                print(a)
-                return a
-            else:
-                sleep(3)
-                print("加载中...")
-            i += 1
-        print("xx")
-
-    def close_weixin(self):
-        try_time = 0
-        while (try_time < 10):
-            sleep(4)
-            print(try_time)
             try:
-                # self.b1.find_element_by_xpath("//div[@id='bindWxQrcode']")
-                self.b1.find_element_by_xpath("//button[@class='close']").click()
-                print("成功关闭微信界面")
+                self.b1.find_element_by_xpath("//a[@class='text-primary vcode-btn get-mobile-code']").click()
+                break
+            except NoSuchElementException as nSuch:
+                print("点击获取验证码确认按钮中")
+                pass
+            except Exception as e:
+                print(e)
+                pass
+            sleep(1)
+        # 等待短信验证码
+        dxyzm = str()
+        while(True):
+            wait_time = 0
+            content = get_yzm( token,id)
+            if wait_time > 30:
+                print("收不到验证码，放弃。")
                 return
-            except NoSuchElementException as nSuch:
-                print("暂时无微信界面")
-            except Exception as e:
-                print(e)
-                pass
+            if  content != "-1" and content != "0" and content != '1':
+                dxyzm =  content[content.rfind("。") - 6:content.rfind("。")]
+                print("短信验证码为:"+dxyzm)
 
-            try_time += 1
-        print("一直无微信界面继续操作...")
-
-    def search(self,word="京东"):
-
-        self.b1.find_element_by_xpath("//input[@id='searchkey']").send_keys(word)
-        # 注意这里停顿 保证搜索按钮可以加载
+                break
+            else:
+                sleep(5)
+                wait_time += 1
+                # print("获取短信验证码中")
+        # 填写短信验证码
         while (True):
-            sleep(3)
             try:
-                c = self.b1.find_element_by_xpath("//span[@class='input-group-btn']")
-                c.click()
+                yzm_click = self.b1.find_element_by_xpath("//input[@id='vcodeNormal']")
+                yzm_click.send_keys(dxyzm)
                 break
             except NoSuchElementException as nSuch:
-                print("点击搜索键中")
+                print("点击获取验证码确认按钮中")
                 pass
             except Exception as e:
                 print(e)
                 pass
-
-    def while_wait(self):
+            sleep(1)
+        # 点击注册
         while (True):
-            sleep(0.5)
+            try:
+                self.b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
+                break
+            except NoSuchElementException as nSuch:
+                print("点击注册按钮中")
+                pass
+            except Exception as e:
+                print(e)
+                pass
+            sleep(1)
+        print(id)
+        while(True):
+            try:
+                if self.b1.current_url == 'https://www.qichacha.com/':
+                    print("注册成功")
+                    write_regsitered_hm(id)
+                    release_hm(token,id)
+                    break
 
-            break
-if __name__ == "__main__":
-    c = Qichacha()
-    cookie = c.qichacha_login("15834664125", "123456")
-    c.close()
+            except Exception as e:
+                print(e)
+            sleep(1)
+
+
+
