@@ -3,7 +3,7 @@ from login import Qichacha
 
 
 def add_cookie():
-    with open(file="qichacha20180319.password",mode="r",encoding="utf-8") as f:
+    with open(file="new_register.txt",mode="r",encoding="utf-8") as f:
         a = f.readlines()
         print(a)
     for id in a:
