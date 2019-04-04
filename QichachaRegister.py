@@ -48,6 +48,10 @@ class QichachaRegister:
         # 截图验证码，下载验证码，使用接码平台来识别验证码
         identifying_code_pic = "yzm/"+time.strftime('%Y%m%d-%H%M%S', time.localtime(time.time())) + ".png"
         while (True):
+            trytime=0
+            if trytime > 60:
+                release_hm(token,id)
+                return
             try:
                 self.b1.find_element_by_xpath("//div[@id='nc_1__imgCaptcha_img']//img").screenshot(identifying_code_pic)
                 break
@@ -57,6 +61,7 @@ class QichachaRegister:
             except Exception as e:
                 print(e)
                 pass
+            trytime+=1
             sleep(1)
         identifying_code = TestFunc(identifying_code_pic)
         # 填写验证码
@@ -147,6 +152,7 @@ class QichachaRegister:
                     write_regsitered_hm(id)
                     release_hm(token,id)
                     break
+
 
             except Exception as e:
                 print(e)

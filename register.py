@@ -1,6 +1,6 @@
 
 from QichachaRegister import QichachaRegister
-from w6888 import w6888_login, get_hm
+from w6888 import w6888_login, get_hm, release_hm
 
 if __name__ == "__main__":
 
@@ -18,4 +18,7 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
         print("----------------end: "+ str(i+1) + "----------------")
-
+#
+# def release():
+#
+#     release_hm(token, id)
