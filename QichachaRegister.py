@@ -13,7 +13,7 @@ SlIDER_LEN = 308
 
 class QichachaRegister:
     def __init__(self):
-        self.b1 = webdriver.Firefox(executable_path="C:/geckodriver.exe")
+        self.b1 = webdriver.Firefox(executable_path="D:/geckodriver.exe")
         self.b1.get("https://www.qichacha.com/user_register")
 
     def close(self):
