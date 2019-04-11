@@ -26,7 +26,7 @@ class Qichacha:
                 action = ActionChains(self.b1)
                 action.click_and_hold(slider).perform()
                 action.drag_and_drop_by_offset(slider, xoffset=slider_len, yoffset=0).perform()
-                sleep(1)
+                sleep(2)
                 try:
                     if self.b1.find_element_by_xpath("//div[@id='nc_1__imgCaptcha_img']//img"):
                         break
@@ -175,13 +175,13 @@ class Qichacha:
             try:
                 c = self.b1.find_element_by_xpath("//span[@class='input-group-btn']")
                 c.click()
+                break
             except NoSuchElementException as nSuch:
                 print("点击搜索键中")
                 pass
             except Exception as e:
                 print(e)
                 break
-            break
         if "index_verify?" in self.b1.current_url:
             if self.yanzheng(263):
                 # 点击验证一下
@@ -195,6 +195,7 @@ class Qichacha:
                         print(e)
                         break
         if "www.qichacha.com/search?key=" in self.b1.current_url:
+            print("获取cookie成功")
             return "".join([_['name'] + "=" + _['value'] + ";" for _ in self.get_search_cookie()])
         else:
             return ""
