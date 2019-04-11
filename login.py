@@ -123,9 +123,6 @@ class Qichacha:
                 print("点击中...")
                 try:
                     self.b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
-                except ElementClickInterceptedException as ec:
-                    print("验证码失败")
-                    return
                 except Exception as e:
                     print(e)
         # 点击
