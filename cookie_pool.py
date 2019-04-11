@@ -28,8 +28,9 @@ def check_invalid_cookie():
             print(doc['id'])
             cookie = c.qichacha_login(doc['id'],"123456")
             c.close()
-            update_solr(doc['id'],cookie)
-            c.close()
+            if len(cookie) > 0:
+                update_solr(doc['id'],cookie)
+
         except Exception as e:
             print(e)
 #

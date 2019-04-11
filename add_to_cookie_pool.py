@@ -7,15 +7,17 @@ def add_cookie():
         a = f.readlines()
         print(a)
     for id in a:
+        i = id.strip()
+        print(i)
+        c = Qichacha()
         try:
-            i = id.strip()
-            print(i)
-            c = Qichacha()
             cookie = c.qichacha_login(i, "123456")
-            c.close()
-            update_solr(i, cookie)
         except Exception as e:
             print(e)
+        c.close()
+        if len(cookie)>0:
+            update_solr(i, cookie)
+
 
 
 if __name__ == "__main__":

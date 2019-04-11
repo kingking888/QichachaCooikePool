@@ -1,7 +1,7 @@
 import time
 from time import sleep
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 # from selenium.webdriver import ActionChains
 from selenium.webdriver.common.action_chains import ActionChains
 from fateadm_api import TestFunc
@@ -16,6 +16,7 @@ class Qichacha:
         self.b1.get("https://www.qichacha.com/user_login")
     def close(self):
         self.b1.close()
+
     def yanzheng(self,slider_len):
         # 定位验证码
         while (True):
@@ -35,6 +36,7 @@ class Qichacha:
                 print("定位验证码")
             except Exception as e:
                 print(e)
+                break
 
         # 截图验证码，下载验证码，使用接码平台来识别验证码
         identifying_code_pic = "yzm/" + time.strftime('%Y%m%d-%H%M%S', time.localtime(time.time())) + ".png"
@@ -52,7 +54,7 @@ class Qichacha:
                 pass
             except Exception as e:
                 print(e)
-                pass
+                break
             sleep(1)
         identifying_code = TestFunc(identifying_code_pic)
         # 填写验证码
@@ -70,7 +72,7 @@ class Qichacha:
                 pass
             except Exception as e:
                 print(e)
-                pass
+                break
             sleep(1)
         # 点击验证码确认按钮
         while (True):
@@ -82,8 +84,20 @@ class Qichacha:
                 pass
             except Exception as e:
                 print(e)
-                pass
+                break
             sleep(1)
+        # 查看验证码是否正确
+        try:
+            a = self.b1.find_element_by_xpath("//span[@data-nc-lang='_errorTEXT']")
+            print("验证码错误")
+            return False
+        except NoSuchElementException as nSuch:
+            print("验证码正确")
+            return True
+
+    # def check_windows_num(self):
+    #     a = self.b1.get_window_rect()
+
     def qichacha_login(self, id, password):
         '''
         :Description：登录企查查平台：https://www.qichacha.com/user_login?back=%2F
@@ -98,7 +112,8 @@ class Qichacha:
         # 输入密码
         pd = self.b1.find_element_by_xpath("//input[@id='pwdNormal']")
         pd.send_keys(password)
-        self.yanzheng(308)
+        if not self.yanzheng(308):
+            return ""
         while (True):
             sleep(3)
             if 'user_login' not in self.b1.current_url:
@@ -106,11 +121,17 @@ class Qichacha:
                 break
             else:
                 print("点击中...")
-                self.b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
+                try:
+                    self.b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
+                except ElementClickInterceptedException as ec:
+                    print("验证码失败")
+                    return
+                except Exception as e:
+                    print(e)
         # 点击
         self.close_weixin()
-        self.search()
-        return "".join([_['name']+"="+_['value']+";" for _ in self.get_search_cookie()])
+
+        return self.search()
 
     def get_search_cookie(self):
         i = 0
@@ -149,30 +170,38 @@ class Qichacha:
         self.b1.find_element_by_xpath("//input[@id='searchkey']").send_keys(word)
         # 注意这里停顿 保证搜索按钮可以加载
         while (True):
+
             sleep(3)
+            # https://www.qichacha.com/index_verify?type=companysearch&back=/search?key=%E4%BA%AC%E4%B8%9C
+            # 登陆过于频繁情况。
+
             try:
                 c = self.b1.find_element_by_xpath("//span[@class='input-group-btn']")
                 c.click()
-
             except NoSuchElementException as nSuch:
                 print("点击搜索键中")
                 pass
             except Exception as e:
                 print(e)
-                pass
-            # https://www.qichacha.com/index_verify?type=companysearch&back=/search?key=%E4%BA%AC%E4%B8%9C
-            # 登陆过于频繁情况。
-            if "index_verify?" in self.b1.current_url:
-
-                self.yanzheng(263)
-            else:
                 break
-
-    def while_wait(self):
-        while (True):
-            sleep(0.5)
-
             break
+        if "index_verify?" in self.b1.current_url:
+            if self.yanzheng(263):
+                # 点击验证一下
+                while(True):
+                    try:
+                        self.b1.find_element_by_xpath("//button[@id='verify']").click()
+                        sleep(1)
+                        if "www.qichacha.com/search?key=" in self.b1.current_url:
+                            break
+                    except Exception as e:
+                        print(e)
+                        break
+        if "www.qichacha.com/search?key=" in self.b1.current_url:
+            return "".join([_['name'] + "=" + _['value'] + ";" for _ in self.get_search_cookie()])
+        else:
+            return ""
+
 if __name__ == "__main__":
     c = Qichacha()
     cookie = c.qichacha_login("15834664125", "123456")
