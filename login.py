@@ -125,6 +125,7 @@ class Qichacha:
                     self.b1.find_element_by_xpath("//button[@class='btn btn-primary btn-block m-t-md login-btn']").click()
                 except Exception as e:
                     print(e)
+                    break
         # 点击
         self.close_weixin()
 
@@ -157,7 +158,7 @@ class Qichacha:
                 print("暂时无微信界面")
             except Exception as e:
                 print(e)
-                pass
+                break
 
             try_time += 1
         print("一直无微信界面继续操作...")
