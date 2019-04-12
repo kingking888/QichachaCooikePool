@@ -47,8 +47,8 @@ class QichachaRegister:
                 print(e)
         # 截图验证码，下载验证码，使用接码平台来识别验证码
         identifying_code_pic = "yzm/"+time.strftime('%Y%m%d-%H%M%S', time.localtime(time.time())) + ".png"
+        trytime = 0
         while (True):
-            trytime=0
             if trytime > 60:
                 release_hm(token,id)
                 return
@@ -103,12 +103,13 @@ class QichachaRegister:
             sleep(1)
         # 等待短信验证码
         dxyzm = str()
+        wait_time = 0
+
         while(True):
-            wait_time = 0
             content = get_yzm( token,id)
 
-            if wait_time > 30 or content == False:
-                print("收不到验证码，放弃。")
+            if wait_time > 70 or content == False:
+                print("一分钟收不到验证码，放弃。")
                 return
             if  content != "-1" and content != "0" and content != '1':
                 dxyzm =  content[content.rfind("。") - 6:content.rfind("。")]
@@ -116,9 +117,9 @@ class QichachaRegister:
 
                 break
             else:
-                sleep(5)
+                sleep(1)
                 wait_time += 1
-                # print("获取短信验证码中")
+                print("获取短信验证码中,等待:"+str(wait_time)+"秒")
         # 填写短信验证码
         while (True):
             try:
