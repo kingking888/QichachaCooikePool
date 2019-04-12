@@ -4,9 +4,12 @@ import time
 from login import Qichacha
 import json
 
+from setting import SOLR_LOCAL
+
+
 def update_solr(user_name,user_cookie,isValid="True"):
     params = {"overwrite": "true", "commitWithin": 1000, "wt": "json"}
-    solr_into_url = "http://blackbox01.jry.com:8983/solr/qichacha_cookie_shard1_replica2/update"
+    solr_into_url = SOLR_LOCAL
     headers = {"Content-Type": "application/json"}
     solr_data = [{"id": user_name,
                   "userCookie": {"set":user_cookie},
