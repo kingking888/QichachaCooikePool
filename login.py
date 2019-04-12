@@ -35,6 +35,7 @@ class Qichacha:
             except NoSuchElementException as e:
                 print("定位验证码")
             except Exception as e:
+                # 要注意一般exception都要break
                 print(e)
                 break
 
