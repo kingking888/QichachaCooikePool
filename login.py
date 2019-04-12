@@ -115,7 +115,9 @@ class Qichacha:
         pd.send_keys(password)
         if not self.yanzheng(308):
             return ""
-        while (True):
+        i = 0
+        while (i < 10):
+            i += 1
             sleep(3)
             if 'user_login' not in self.b1.current_url:
                 print("进入页面...")
