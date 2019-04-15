@@ -1,11 +1,10 @@
 
 from QichachaRegister import QichachaRegister
 from w6888 import w6888_login, get_hm, release_hm
-
-if __name__ == "__main__":
-
+import _thread
+def run():
     # 注册15个
-    num =15
+    num =100
     for i in range(num):
         print("----------------start: "+ str(i+1) + "----------------")
         try:
@@ -22,3 +21,5 @@ if __name__ == "__main__":
 # def release():
 #
 #     release_hm(token, id)
+if __name__ == "__main__":
+    run()

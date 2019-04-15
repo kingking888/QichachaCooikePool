@@ -23,7 +23,7 @@ def get_yzm(token,hm,xmid="10832"):
 def release_hm(token,hm):
     res = re.get("http://w6888.cn:9180/service.asmx/sfHmStr?token={0}&hm={1}".format(token,id))
     if res.status_code == 200:
-        if res.content.decode('utf-8') == 1:
+        if res.content.decode('utf-8') == "1":
             print("号码:"+hm+"释放成功")
 
 def write_regsitered_hm(hm):

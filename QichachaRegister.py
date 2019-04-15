@@ -56,7 +56,7 @@ class QichachaRegister:
                 self.b1.find_element_by_xpath("//div[@id='nc_1__imgCaptcha_img']//img").screenshot(identifying_code_pic)
                 break
             except NoSuchElementException as nSuch:
-                print("加载验证码中")
+                print("加载验证码中,等待:"+str(trytime)+"秒")
                 pass
             except Exception as e:
                 print(e)
@@ -108,7 +108,7 @@ class QichachaRegister:
         while(True):
             content = get_yzm( token,id)
 
-            if wait_time > 70 or content == False:
+            if wait_time > 15 or content == False:
                 print("一分钟收不到验证码，放弃。")
                 return
             if  content != "-1" and content != "0" and content != '1':
@@ -117,9 +117,9 @@ class QichachaRegister:
 
                 break
             else:
-                sleep(1)
+                sleep(3)
                 wait_time += 1
-                print("获取短信验证码中,等待:"+str(wait_time)+"秒")
+                print("获取短信验证码中,刷新等待第:"+str(wait_time)+"次")
         # 填写短信验证码
         while (True):
             try:
