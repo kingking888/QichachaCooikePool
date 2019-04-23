@@ -4,7 +4,7 @@ import time
 from login import Qichacha
 import json
 
-from setting import SOLR_LOCAL
+from setting import SOLR_LOCAL, ISLOGIN_URL
 
 
 def update_solr(user_name,user_cookie,isLogIn="True"):
@@ -24,7 +24,7 @@ def update_solr(user_name,user_cookie,isLogIn="True"):
     re = requests.post(solr_into_url, data=a,params=params,headers=headers)
     print(re.text)
 def check_invalid_cookie():
-    invalid = "http://blackbox01.jry.com:8983/solr/qichacha_cookie_shard1_replica2/select?q=isValid%3Afalse&rows=1000&wt=json&indent=true"
+    invalid = ISLOGIN_URL
     res = requests.get(invalid)
     print(res.json()['response'])
     for doc in res.json()['response']['docs']:
