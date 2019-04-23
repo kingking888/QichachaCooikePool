@@ -19,7 +19,8 @@ class Qichacha:
 
     def yanzheng(self,slider_len):
         # 定位验证码
-        while (True):
+        t = 0
+        while (t<30):
             try:
                 slider = self.b1.find_element_by_xpath("//span[@id='nc_1_n1z']")
                 sleep(1)
@@ -31,17 +32,19 @@ class Qichacha:
                     if self.b1.find_element_by_xpath("//div[@id='nc_1__imgCaptcha_img']//img"):
                         break
                 except NoSuchElementException as e:
-                        print("定位验证码")
+                        print("定位验证码..")
             except NoSuchElementException as e:
-                print("定位验证码")
+                print("定位验证码...")
             except Exception as e:
                 # 要注意一般exception都要break
                 print(e)
                 break
+            t += 1
 
         # 截图验证码，下载验证码，使用接码平台来识别验证码
         identifying_code_pic = "yzm/" + time.strftime('%Y%m%d-%H%M%S', time.localtime(time.time())) + ".png"
-        while (True):
+        t = 0
+        while (t<30):
             try:
                 self.b1.find_element_by_xpath("//div[@id='nc_1__imgCaptcha_img']//img").screenshot(
                     identifying_code_pic)
@@ -57,6 +60,7 @@ class Qichacha:
                 print(e)
                 break
             sleep(1)
+            t += 1
         identifying_code = TestFunc(identifying_code_pic)
         # 填写验证码
         while (True):
@@ -165,6 +169,7 @@ class Qichacha:
 
             try_time += 1
         print("一直无微信界面继续操作...")
+        self.close()
 
     def search(self,word="京东"):
 
