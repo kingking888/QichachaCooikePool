@@ -55,7 +55,7 @@ class Qichacha:
                     pass
             except NoSuchElementException as nSuch:
                 print("加载验证码中")
-                pass
+                return
             except Exception as e:
                 print(e)
                 break
